@@ -9,7 +9,7 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 
 @app.route('/')
 def main():
-    pass
+    return render_template('index.html', teachers=data.teachers)
 
 
 @app.route('/goals/<goal>/')
@@ -18,7 +18,6 @@ def get_goal(goal):
     for teacher in data.teachers:
         if goal in teacher['goals']:
             teachers_for_goal.append(teacher)
-            print(teachers_for_goal)
     return render_template('goal.html', teachers=teachers_for_goal, goal= data.goals[goal])
 
 
@@ -37,7 +36,7 @@ def get_teacher(id_teacher):
 
 @app.route('/request/')
 def do_request():
-    pass
+    return render_template('request.html')
 
 
 @app.route('/request_done/')
