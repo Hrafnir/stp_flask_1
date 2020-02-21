@@ -23,8 +23,10 @@ def get_goal():
 @app.route('/profiles/<int:id_teacher>/')
 def get_teacher(id_teacher):
     teach_dict = data.teachers[id_teacher]
-    print(teach_dict)
-    render_template('profile.html', teach_dict=teach_dict)
+    goals = []
+    for i in teach_dict['goals']:
+        goals.append(data.goals[i])
+    return render_template('profile.html', teach_dict=teach_dict, title=teach_dict['name'], goals=goals)
 
 
 @app.route('/request/')
