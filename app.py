@@ -6,10 +6,6 @@ app = Flask(__name__) 	# объявим экземпляр фласка
 
 
 
-# @app.before_first_request
-# def create_teachers_json():
-#     print(data.teachers)
-
 @app.route('/')
 def main():
     pass
@@ -39,9 +35,12 @@ def req_done():
     pass
 
 
-@app.route('/booking/<id_teacher>/<day>/<time>/')
-def do_the_booking():
-    pass
+@app.route('/booking/<int:id_teacher>/<day>/<time>/')
+def do_the_booking(id_teacher, day, time):
+    days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
+    day_ru = days_name[day]
+    teach_dict = data.teachers[id_teacher]
+    return render_template('booking.html', teach_dict=teach_dict, id_teacher=id_teacher, day=day, time=time, day_ru=day_ru)
 
 
 @app.route('/booking_done/')
