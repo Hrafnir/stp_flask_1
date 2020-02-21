@@ -1,9 +1,12 @@
 import json
 import data
-from flask import Flask, render_template 	# сперва подключим модуль
+from flask import Flask, render_template, request  # сперва подключим модуль
 import data  # sample date from file
+
+
 app = Flask(__name__) 	# объявим экземпляр фласка
 
+days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
 
 
 @app.route('/')
@@ -22,7 +25,11 @@ def get_teacher(id_teacher):
     goals = []
     for i in teach_dict['goals']:
         goals.append(data.goals[i])
-    return render_template('profile.html', teach_dict=teach_dict, title=teach_dict['name'], goals=goals)
+    return render_template('profile.html',
+                           teach_dict=teach_dict,
+                           title=teach_dict['name'],
+                           goals=goals
+                           )
 
 
 @app.route('/request/')
@@ -37,15 +44,29 @@ def req_done():
 
 @app.route('/booking/<int:id_teacher>/<day>/<time>/')
 def do_the_booking(id_teacher, day, time):
-    days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
     day_ru = days_name[day]
     teach_dict = data.teachers[id_teacher]
-    return render_template('booking.html', teach_dict=teach_dict, id_teacher=id_teacher, day=day, time=time, day_ru=day_ru)
+    return render_template('booking.html',
+                           teach_dict=teach_dict,
+                           id_teacher=id_teacher,
+                           day=day,
+                           time=time,
+                           day_ru=day_ru
+                           )
 
 
-@app.route('/booking_done/')
-def booking_done():
-    pass
+@app.route('/booking_done/', methods=['POST'])
+def show_booking_done():
+    client_weekday = request.form['clientWeekday']
+    client_time = request.form['clientTime']
+    client_name = request.form['clientName']
+    client_phone = request.form['clientPhone']
+    return render_template('booking_done.html',
+                           client_name=client_name,
+                           client_phone=client_phone,
+                           client_time=client_time,
+                           client_weekday=days_name[client_weekday],
+                           )
 
 
 if __name__ == '__main__':
