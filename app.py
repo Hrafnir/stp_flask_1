@@ -57,13 +57,13 @@ def do_the_booking(id_teacher, day, time):
                            )
 
 
-@app.route('/save_book/', methods=['POST'])
+@app.route('/booking_done/', methods=['POST'])
 def show_booking_done():
     client_weekday = request.form['clientWeekday']
     client_time = request.form['clientTime']
     client_name = request.form['clientName']
     client_phone = request.form['clientPhone']
-    with open('book.json', 'a') as file:
+    with open('book.json', 'w') as file:
         data_book = {'client_weekday': client_weekday,
                      'client_time': client_time,
                      'client_name': client_name,
@@ -76,20 +76,6 @@ def show_booking_done():
                            client_time=client_time,
                            client_weekday=days_name[client_weekday],
                            )
-
-
-# @app.route('/booking_done/', methods=['POST'])
-# def show_booking_done():
-#     client_weekday = request.form['clientWeekday']
-#     client_time = request.form['clientTime']
-#     client_name = request.form['clientName']
-#     client_phone = request.form['clientPhone']
-#     return render_template('booking_done.html',
-#                            client_name=client_name,
-#                            client_phone=client_phone,
-#                            client_time=client_time,
-#                            client_weekday=days_name[client_weekday],
-#                            )
 
 
 if __name__ == '__main__':
