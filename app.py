@@ -39,9 +39,18 @@ def do_request():
     return render_template('request.html')
 
 
-@app.route('/request_done/')
+@app.route('/request_done/', methods=['POST'])
 def req_done():
-    pass
+    client_goal = request.form['goal']
+    client_time = request.form['time']
+    client_name = request.form['name']
+    client_phone = request.form['telephone']
+    # with open('request.json', 'w') as req:
+    #     data_dict=[]
+    #     data_dict.append(client_goal, client_name, client_time, client_phone)
+    return request.form
+
+
 
 
 @app.route('/booking/<int:id_teacher>/<day>/<time>/')
