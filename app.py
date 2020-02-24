@@ -8,8 +8,10 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 
 
 @app.route('/')
-def main():
-    return render_template('index.html', teachers=data.teachers)
+@app.route('/<string:teachers>/')
+def show_teachers(teachers):
+    if teachers == 'tutors'
+        return render_template('index.html', teachers=data.teachers)
 
 
 @app.route('/goals/<goal>/')
@@ -41,20 +43,18 @@ def do_request():
 
 @app.route('/request_done/', methods=['POST'])
 def req_done():
-    client_goal = request.form['goal']
-    client_time = request.form['time']
-    client_name = request.form['name']
-    client_phone = request.form['telephone']
-    # with open('request.json', 'w') as req:
-    #     data_dict=[]
-    #     data_dict.append(client_goal, client_name, client_time, client_phone)
-    return request.form
-
-
+    # catch all data from form
+    request_dict = request.form
+    with open('request.json', 'w') as req:
+        json.dump(request_dict, req)
+    # variable with value of goal from goals dict
+    goal = data.goals[request_dict['goal']]
+    return render_template('request_done.html', request_dict=request_dict, goal=goal)
 
 
 @app.route('/booking/<int:id_teacher>/<day>/<time>/')
 def do_the_booking(id_teacher, day, time):
+    # variable with value of day on russian from days dict
     day_ru = days_name[day]
     teach_dict = data.teachers[id_teacher]
     return render_template('booking.html',
