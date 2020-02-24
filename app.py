@@ -11,7 +11,6 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 @app.route('/')
 def show_main_page():
     teachers = random.choices(population=data.teachers, k=6)
-    print(teachers)
     return render_template('index.html', teachers=teachers)
 
 
