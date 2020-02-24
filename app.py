@@ -10,8 +10,10 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 
 @app.route('/')
 def show_main_page():
-    teachers = random.choices(population=data.teachers, k=6)
-    return render_template('index.html', teachers=teachers)
+    teachers = data.teachers
+    random.shuffle(teachers)
+    print(teachers)
+    return render_template('index.html', teachers=teachers[:6])
 
 
 @app.route('/tutors/')
