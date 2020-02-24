@@ -8,11 +8,17 @@ app = Flask(__name__)  # объявим экземпляр фласка
 days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
 
 
+# my first code reuse object ^_^
+def select_teacher(id_teacher):
+    for teach in data.teachers:
+        if teach['id'] == id_teacher:
+            return teach
+
+
 @app.route('/')
 def show_main_page():
     teachers = data.teachers
     random.shuffle(teachers)
-    print(teachers)
     return render_template('index.html', teachers=teachers[:6])
 
 
@@ -33,7 +39,7 @@ def get_goal(goal):
 
 @app.route('/profiles/<int:id_teacher>/')
 def get_teacher(id_teacher):
-    teach_dict = data.teachers[id_teacher]
+    teach_dict = select_teacher(id_teacher)
     goals = []
     for i in teach_dict['goals']:
         goals.append(data.goals[i])
@@ -68,7 +74,7 @@ def req_done():
 def do_the_booking(id_teacher, day, time):
     # variable with value of day on russian from days dict
     day_ru = days_name[day]
-    teach_dict = data.teachers[id_teacher]
+    teach_dict = select_teacher(id_teacher)
     return render_template('booking.html',
                            teach_dict=teach_dict,
                            id_teacher=id_teacher,
