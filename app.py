@@ -1,4 +1,5 @@
 import json
+import random
 from flask import Flask, render_template, request  # сперва подключим модуль
 import data  # sample date from file
 
@@ -8,10 +9,16 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 
 
 @app.route('/')
-@app.route('/<string:teachers>/')
-def show_teachers(teachers):
-    if teachers == 'tutors'
-        return render_template('index.html', teachers=data.teachers)
+def show_main_page():
+    teachers = random.choices(population=data.teachers, k=6)
+    print(teachers)
+    return render_template('index.html', teachers=teachers)
+
+
+@app.route('/tutors/')
+def show_teachers():
+    teachers = data.teachers
+    return render_template('index.html', teachers=teachers)
 
 
 @app.route('/goals/<goal>/')
