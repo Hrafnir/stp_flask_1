@@ -17,7 +17,7 @@ def show_main_page():
 @app.route('/tutors/')
 def show_teachers():
     teachers = data.teachers
-    return render_template('index.html', teachers=teachers)
+    return render_template('index.html', teachers=teachers, title='Все репетиторы')
 
 
 @app.route('/goals/<goal>/')
@@ -44,7 +44,7 @@ def get_teacher(id_teacher):
 
 @app.route('/request/')
 def do_request():
-    return render_template('request.html')
+    return render_template('request.html', title='Заявка на подбор')
 
 
 @app.route('/request_done/', methods=['POST'])
@@ -55,7 +55,11 @@ def req_done():
         json.dump(request_dict, req)
     # variable with value of goal from goals dict
     goal = data.goals[request_dict['goal']]
-    return render_template('request_done.html', request_dict=request_dict, goal=goal)
+    return render_template('request_done.html',
+                           request_dict=request_dict,
+                           goal=goal,
+                           title='Заявка создана, {}'.format(request_dict['name'])
+                           )
 
 
 @app.route('/booking/<int:id_teacher>/<day>/<time>/')
@@ -68,7 +72,8 @@ def do_the_booking(id_teacher, day, time):
                            id_teacher=id_teacher,
                            day=day,
                            time=time,
-                           day_ru=day_ru
+                           day_ru=day_ru,
+                           title='Забронировать преподавателя'
                            )
 
 
@@ -90,6 +95,7 @@ def show_booking_done():
                            client_phone=client_phone,
                            client_time=client_time,
                            client_weekday=days_name[client_weekday],
+                           title='Преподаватель забронирован, {}'.format(client_name)
                            )
 
 
