@@ -8,7 +8,7 @@ app = Flask(__name__)  # объявим экземпляр фласка
 days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
 
 
-# my first code reuse object ^_^
+# my first code reuse function object ^_^
 def select_teacher(id_teacher):
     for teach in data.teachers:
         if teach['id'] == id_teacher:
