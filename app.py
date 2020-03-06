@@ -8,7 +8,7 @@ from wtforms import StringField
 import data  # sample date from file
 
 app = Flask(__name__)  # объявим экземпляр фласка
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 db = SQLAlchemy(app)
 app.secret_key = 'asdwefwedf'
 migrate = Migrate(app, db)
@@ -22,6 +22,31 @@ def select_teacher(id_teacher):
     for teach in data.teachers:
         if teach['id'] == id_teacher:
             return teach
+
+
+class Teacher(db.Model):
+    __tablename__ = 'teachers'
+    t_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    about = db.Column(db.String, nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    picture = db.Column(db.String, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    goals = db.Column(db.String, nullable=False)
+    free = db.Column(db.String, nullable=False)
+    bookings = db.relationship("Booking", back_populates="teacher")
+
+
+class Booking(db.Model):
+    __tablename__ = 'bookings'
+    b_id = db.Column(db.Integer, primary_key=True)
+    client_name = db.Column(db.String, nullable=False)
+    client_phone = db.Column(db.String, nullable=False)
+    client_weekday = db.Column(db.String, nullable=False)
+    client_time = db.Column(db.Time, nullable=False)
+    teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id")
+    teacher = db.relationship("Teacher", back_populates="bookings")
+
 
 
 @app.route('/')
