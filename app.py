@@ -1,9 +1,18 @@
 import json
 import random
 from flask import Flask, render_template, request  # сперва подключим модуль
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_wtf import FlaskForm
+from wtforms import StringField
 import data  # sample date from file
 
 app = Flask(__name__)  # объявим экземпляр фласка
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+app.secret_key = 'asdwefwedf'
+migrate = Migrate(app, db)
+
 
 days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
 
