@@ -47,6 +47,15 @@ class Booking(db.Model):
     teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id")
     teacher = db.relationship("Teacher", back_populates="bookings")
 
+class Request(db.Model):
+    __tablename__ = 'requsets'
+    r_id = db.Column(db.Integer, primary_key=True)
+    goal = db.Column(db.String, nullable=False)
+    client_name = db.Column(db.String, nullable=False)
+    client_phone = db.Column(db.String, nullable=False)
+    time =  db.Column(db.String, nullable=False)
+
+#script for import json data to db
 
 
 @app.route('/')
