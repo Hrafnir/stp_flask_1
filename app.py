@@ -68,6 +68,7 @@ for teach in data.teachers:
                       )
     db.session.add(teacher)
 db.session.commit()
+
 @app.route('/')
 def show_main_page():
     teachers = data.teachers
