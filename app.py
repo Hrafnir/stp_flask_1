@@ -57,7 +57,17 @@ class Request(db.Model):
 
 #script for import json data to db
 
-
+for teach in data.teachers:
+    teacher = Teacher(name=teach['name'],
+                      about=teach['about'],
+                      price=teach['price'],
+                      rating=teach['rating'],
+                      picture=teach['picture'],
+                      goals=teach['goals'],
+                      free=teach['free']
+                      )
+    db.session.add(teacher)
+db.session.commit()
 @app.route('/')
 def show_main_page():
     teachers = data.teachers
