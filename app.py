@@ -10,6 +10,7 @@ import data  # sample date from file
 app = Flask(__name__)  # объявим экземпляр фласка
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 db = SQLAlchemy(app)
+
 app.secret_key = 'asdwefwedf'
 migrate = Migrate(app, db)
 
@@ -44,30 +45,18 @@ class Booking(db.Model):
     client_phone = db.Column(db.String, nullable=False)
     client_weekday = db.Column(db.String, nullable=False)
     client_time = db.Column(db.Time, nullable=False)
-    teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id")
+    teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id"))
     teacher = db.relationship("Teacher", back_populates="bookings")
 
+
 class Request(db.Model):
-    __tablename__ = 'requsets'
+    __tablename__ = 'requests'
     r_id = db.Column(db.Integer, primary_key=True)
     goal = db.Column(db.String, nullable=False)
     client_name = db.Column(db.String, nullable=False)
     client_phone = db.Column(db.String, nullable=False)
-    time =  db.Column(db.String, nullable=False)
+    time = db.Column(db.String, nullable=False)
 
-#script for import json data to db
-
-for teach in data.teachers:
-    teacher = Teacher(name=teach['name'],
-                      about=teach['about'],
-                      price=teach['price'],
-                      rating=teach['rating'],
-                      picture=teach['picture'],
-                      goals=teach['goals'],
-                      free=teach['free']
-                      )
-    db.session.add(teacher)
-db.session.commit()
 
 @app.route('/')
 def show_main_page():
