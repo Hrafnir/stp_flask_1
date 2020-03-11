@@ -14,9 +14,9 @@ db = SQLAlchemy(app)
 app.secret_key = 'asdwefwedf'
 migrate = Migrate(app, db)
 
-days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
+days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница", "sat": "Суббота", "sun": "Воскресенье"}
 
-goals = {"travel": "⛱Для путешествий", "study": "🏫Для учебы", "work": "🏢Для работы", "relocate": "🚜Для переезда"}
+
 
 
 # # my first code reuse function object ^_^
@@ -44,7 +44,9 @@ class Goal(db.Model):
     g_id = db.Column(db.Integer, primary_key=True)
     goal_name = db.Column(db.String, nullable=False)
     teacher = db.relationship("Teacher", back_populates="goals")
-    teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id"))
+    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
+
+
 
 
 # teacher = Teacher(t_id=1231213323434,
@@ -59,15 +61,15 @@ class Goal(db.Model):
 # db.session.add(teacher)
 # db.session.commit()
 
-# class Booking(db.Model):
-#     __tablename__ = 'bookings'
-#     b_id = db.Column(db.Integer, primary_key=True)
-#     client_name = db.Column(db.String, nullable=False)
-#     client_phone = db.Column(db.String, nullable=False)
-#     client_weekday = db.Column(db.String, nullable=False)
-#     client_time = db.Column(db.Time, nullable=False)
-#     # teacher_id = db.relationship(db.Integer, db.ForeignKey("teachers.t_id"))
-#     # teacher = db.relationship("Teacher", back_populates="bookings")
+class Booking(db.Model):
+    __tablename__ = 'bookings'
+    b_id = db.Column(db.Integer, primary_key=True)
+    client_name = db.Column(db.String, nullable=False)
+    client_phone = db.Column(db.String, nullable=False)
+    client_weekday = db.Column(db.String, nullable=False)
+    client_time = db.Column(db.Time, nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
+    teacher = db.relationship("Teacher", back_populates="bookings")
 #
 #
 # class Request(db.Model):
@@ -104,18 +106,24 @@ class Goal(db.Model):
 #     return render_template('goal.html', teachers=teachers_for_goal, goal=data.goals[goal])
 #
 #
+
+
+#need to add 404
 @app.route('/profiles/<int:id_teacher>/')
 def get_teacher(id_teacher):
     teacher = db.session.query(Teacher).get_or_404(id_teacher)
+    goals = db.session.query(Goal).filter(Goal.teacher_id == id_teacher).all()
     goals_for_teacher = []
-    print(teacher.goals)
-    for goal in list(teacher.goals):
-        print(goal)
-        goals_for_teacher.append(goals[goal])
+    for i in goals:
+        goals_for_teacher.append(i.goal_name)
+    print(goals_for_teacher)
+    free_dict = json.loads(str(teacher.free))
     return render_template('profile.html',
                            teach_dict=teacher,
-                           title=teacher['name'],
-                           goals=goals_for_teacher
+                           title=teacher.name,
+                           goals=goals_for_teacher,
+                           free_dict=free_dict,
+                           days_name=days_name
                            )
 #
 #
@@ -175,6 +183,6 @@ def get_teacher(id_teacher):
 #                            title='Преподаватель забронирован, {}'.format(client_name)
 #                            )
 
-
+db.create_all()
 if __name__ == '__main__':
     app.run(port=4999, debug=True)

@@ -11,7 +11,7 @@
             <section class="teacher=info">
 
               <h1 class="h2">{{ teach_dict.name }}</h1>
-              <p>{% for goal in goals %} <span class="badge badge-primary mr-2">{{ goal }}</span> {% endfor %}
+              <p>{% for goal in goals %} <span class="badge badge-primary mr-2">{{ goal[2:] }}</span> {% endfor %}
                 Рейтинг: {{ teach_dict.rating }}
                 {% if teach_dict.rating > 4 %}
                   &#128540
@@ -26,52 +26,17 @@
             <section class="available">
 
               <h4 class="mb-4 mt-5">Записаться на пробный урок</h4>
-
-              <h6 class="mt-4">Понедельник</h6>
-                {% if True is not in teach_dict.free.mon.values()%}
-                   <p>Нет свободных уроков</p>
-                {% endif%}
-                {% for key, value in teach_dict.free.mon.items() %}
-                  {% if value == True %}
-                    <a href="/booking/{{ teach_dict.id }}/mon/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
+              {% for day, free_times in free_dict.items() %}
+                <h6 class="mt-4">{{ days_name[day] }}:</h6>
+                  {% if True is not in free_times.values() %}
+                     <p>Нет свободных уроков</p>
                   {% endif%}
-                {% endfor %}
-              <h6 class="mt-4">Вторник</h6>
-                {% if True is not in teach_dict.free.tue.values()%}
-                   <p>Нет свободных уроков</p>
-                {% endif%}
-                {% for key, value in teach_dict.free.tue.items() %}
+                  {% for key, value in free_times.items() %}
                     {% if value == True %}
-                      <a href="/booking/{{ teach_dict.id }}/tue/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
+                      <a href="/booking/{{ teach_dict.t_id }}/{{ day }}/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
                     {% endif%}
-                {% endfor %}
-              <h6 class="mt-4">Среда</h6>
-                {% if True is not in teach_dict.free.wed.values()%}
-                   <p>Нет свободных уроков</p>
-                {% endif%}
-                {% for key, value in teach_dict.free.wed.items() %}
-                    {% if value == True %}
-                      <a href="/booking/{{ teach_dict.id }}/wed/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
-                    {% endif%}
-                {% endfor %}
-              <h6 class="mt-4">Четверг</h6>
-                {% if True is not in teach_dict.free.thu.values()%}
-                   <p>Нет свободных уроков</p>
-                {% endif%}
-                {% for key, value in teach_dict.free.thu.items() %}
-                    {% if value == True %}
-                      <a href="/booking/{{ teach_dict.id }}/thu/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
-                    {% endif%}
-                {% endfor %}
-              <h6 class="mt-4">Пятница</h6>
-                {% if True is not in teach_dict.free.fri.values()%}
-                   <p>Нет свободных уроков</p>
-                {% endif%}
-                {% for key, value in teach_dict.free.fri.items() %}
-                    {% if value == True %}
-                      <a href="/booking/{{ teach_dict.id }}/fri/{{ key }}/" class="btn btn-outline-success  mr-2">{{ key }} свободно</a>
-                    {% endif%}
-                {% endfor %}
+                  {% endfor %}
+              {% endfor %}
 
             </section>
 
