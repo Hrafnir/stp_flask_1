@@ -1,7 +1,7 @@
 import data
-from app import db, Teacher, Booking
+from app import db, Teacher, Goal
 
-#script for import json data to db
+# #script for import json data to db
 #                       name=teach['name'],
 #                       about=teach['about'],
 #                       price=teach['price'],
@@ -10,6 +10,19 @@ from app import db, Teacher, Booking
 #                       goals=teach['goals'],
 #                       free=teach['free']
 for teach in data.teachers:
-    teacher = Teacher(**teach)
+    teacher = Teacher(t_id=teach['t_id'],
+                      name=teach['name'],
+                      about=teach['about'],
+                      price=teach['price'],
+                      rating=teach['rating'],
+                      picture=teach['picture'],
+                      free=str(teach['free'])
+                      )
     db.session.add(teacher)
-db.session.commit()
+
+    for i in teach['goals']:
+        goal = Goal(goal_name=i,
+                    teacher_id=teach['t_id']
+                    )
+        db.session.add(goal)
+
