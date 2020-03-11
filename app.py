@@ -92,21 +92,21 @@ class Request(db.Model):
 #     return render_template('index.html', teachers=teachers, title='Все репетиторы')
 #
 #
-# @app.route('/goals/<goal>/')
-# def get_goal(goal):
-#     teachers_for_goal = []
-#     for teacher in data.teachers:
-#         if goal in teacher['goals']:
-#             teachers_for_goal.append(teacher)
-#     return render_template('goal.html', teachers=teachers_for_goal, goal=data.goals[goal])
-#
-#
+#need to add goal url in Goal model
+@app.route('/goals/<goal>/')
+def get_goal(goal):
+    teachers_for_goal = db.session.query(Goal).filter(Goal.goal_name == goal).all()
+    for teacher in teachers_for_goal:
+        print(teacher.teacher_id)
+    return render_template('goal.html', teachers=teachers_for_goal, goal=data.goals[goal])
 
 
-# need to add 404
+
+
+
 @app.route('/profiles/<int:id_teacher>/')
 def get_teacher(id_teacher):
-    teacher = db.session.query(Teacher).get_or_404(id_teacher)
+    teacher = db.session.query(Teacher).get(id_teacher)
     if teacher:
         goals = db.session.query(Goal).filter(Goal.teacher_id == id_teacher).all()
         goals_for_teacher = []
