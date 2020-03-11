@@ -14,8 +14,9 @@ db = SQLAlchemy(app)
 app.secret_key = 'asdwefwedf'
 migrate = Migrate(app, db)
 
-
 days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница"}
+
+goals = {"travel": "Для путешествий", "study": "Для учебы", "work": "Для работы", "relocate": "Для переезда"}
 
 
 # my first code reuse function object ^_^
@@ -77,7 +78,7 @@ def get_goal(goal):
     for teacher in data.teachers:
         if goal in teacher['goals']:
             teachers_for_goal.append(teacher)
-    return render_template('goal.html', teachers=teachers_for_goal, goal= data.goals[goal])
+    return render_template('goal.html', teachers=teachers_for_goal, goal=data.goals[goal])
 
 
 @app.route('/profiles/<int:id_teacher>/')
