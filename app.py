@@ -14,9 +14,8 @@ db = SQLAlchemy(app)
 app.secret_key = 'asdwefwedf'
 migrate = Migrate(app, db)
 
-days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница", "sat": "Суббота", "sun": "Воскресенье"}
-
-
+days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "Среда", "thu": "Четверг", "fri": "Пятница",
+             "sat": "Суббота", "sun": "Воскресенье"}
 
 
 # # my first code reuse function object ^_^
@@ -47,8 +46,6 @@ class Goal(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
 
 
-
-
 # teacher = Teacher(t_id=1231213323434,
 #                   name="asdf",
 #                   about='asdfasdf',
@@ -61,6 +58,7 @@ class Goal(db.Model):
 # db.session.add(teacher)
 # db.session.commit()
 
+
 class Booking(db.Model):
     __tablename__ = 'bookings'
     b_id = db.Column(db.Integer, primary_key=True)
@@ -70,20 +68,17 @@ class Booking(db.Model):
     client_time = db.Column(db.Time, nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
     teacher = db.relationship("Teacher", back_populates="bookings")
-#
-#
-# class Request(db.Model):
-#     __tablename__ = 'requests'
-#     r_id = db.Column(db.Integer, primary_key=True)
-#     goal = db.Column(db.String, nullable=False)
-#     client_name = db.Column(db.String, nullable=False)
-#     client_phone = db.Column(db.String, nullable=False)
-#     time = db.Column(db.String, nullable=False)
-#
-#
-#
-#
-#
+
+
+class Request(db.Model):
+    __tablename__ = 'requests'
+    r_id = db.Column(db.Integer, primary_key=True)
+    goal = db.Column(db.String, nullable=False)
+    client_name = db.Column(db.String, nullable=False)
+    client_phone = db.Column(db.String, nullable=False)
+    time = db.Column(db.String, nullable=False)
+
+
 # @app.route('/')
 # def show_main_page():
 #     teachers = data.teachers
@@ -108,23 +103,27 @@ class Booking(db.Model):
 #
 
 
-#need to add 404
+# need to add 404
 @app.route('/profiles/<int:id_teacher>/')
 def get_teacher(id_teacher):
     teacher = db.session.query(Teacher).get_or_404(id_teacher)
-    goals = db.session.query(Goal).filter(Goal.teacher_id == id_teacher).all()
-    goals_for_teacher = []
-    for i in goals:
-        goals_for_teacher.append(i.goal_name)
-    print(goals_for_teacher)
-    free_dict = json.loads(str(teacher.free))
-    return render_template('profile.html',
-                           teach_dict=teacher,
-                           title=teacher.name,
-                           goals=goals_for_teacher,
-                           free_dict=free_dict,
-                           days_name=days_name
-                           )
+    if teacher:
+        goals = db.session.query(Goal).filter(Goal.teacher_id == id_teacher).all()
+        goals_for_teacher = []
+        for i in goals:
+            goals_for_teacher.append(i.goal_name)
+        free_dict = json.loads(teacher.free)
+        return render_template('profile.html',
+                               teach_dict=teacher,
+                               title=teacher.name,
+                               goals=goals_for_teacher,
+                               free_dict=free_dict,
+                               days_name=days_name
+                               )
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', title='Страница не найдена'), 404
 #
 #
 # @app.route('/request/')
