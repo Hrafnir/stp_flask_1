@@ -9,15 +9,19 @@
             <img src="{{ teach_dict.picture }}" class="mb-3" width="95" alt="">
             <h2 class="h5 card-title mt-2 mb-2">{{ teach_dict.name }}</h2>
             <p class="my-1">Запись на пробный урок</p>
-            <p class="my-1">{{ day_ru }}, в {{ time }}</p>
+            <p class="my-1">{{ day_ru }}, в {{ form.client_time.data }}</p>
           </div>
           <hr />
           <div class="card-body mx-3">
-              <form id="booking-form" action="/save_book/" method="post">
+              <form id="booking-form" action="/booking_done/" method="post">
+                    {{ form.csrf_token }}
+                    {% for err in form.errors %}
+                        <p>{{ err }}</p>
+                    {% endfor %}
                     <div class="row">
-                        <input class="form-control" type="hidden" name="clientWeekday" value="{{ day }}">
-                        <input class="form-control" type="hidden" name="clientTime" value="{{ time }}">
-                        <input class="form-control" type="hidden" name="clientTeacher" value="{{ teach_dict.t_id }}">
+                        {{ form.client_weekday(class="form-control") }}
+                        {{ form.client_time(class="form-control") }}
+                        {{ form.teacher_id(class="form-control") }}
                     </div>
                       {{ form.client_name.label(class="mb-1 mt-2") }}
                       {{ form.client_name(class="form-control") }}

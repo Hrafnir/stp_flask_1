@@ -48,14 +48,13 @@ class Goal(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
 
 
-
 class Booking(db.Model):
     __tablename__ = 'bookings'
     b_id = db.Column(db.Integer, primary_key=True)
     client_name = db.Column(db.String, nullable=False)
     client_phone = db.Column(db.String, nullable=False)
     client_weekday = db.Column(db.String, nullable=False)
-    client_time = db.Column(db.Time, nullable=False)
+    client_time = db.Column(db.String, nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
     teacher = db.relationship("Teacher", back_populates="bookings")
 
@@ -80,6 +79,7 @@ def show_main_page():
         else:
             break
     return render_template('index.html', teachers=teach_s, goals=goals)
+
 
 #
 # @app.route('/tutors/')
@@ -116,9 +116,12 @@ def get_teacher(id_teacher):
                                days_name=days_name
                                )
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', title='Страница не найдена'), 404
+
+
 #
 #
 # @app.route('/request/')
@@ -142,37 +145,43 @@ def page_not_found(e):
 #
 #
 
-@app.route('/booking/<int:id_teacher>/<day>/<time>/')
-def do_the_booking(id_teacher, day, time):
+@app.route('/booking/<int:id_teacher>/<day>/<b_time>/')
+def do_the_booking(id_teacher, day, b_time):
     # variable with value of day on russian from days dict
     day_ru = days_name[day]
-    form = BookingForm()
+    form = BookingForm(client_weekday=day,
+                       client_time=b_time,
+                       teacher_id=id_teacher
+                       )
     teach_dict = db.session.query(Teacher).get(id_teacher)
     return render_template('booking.html',
                            teach_dict=teach_dict,
-                           day=day,
-                           time=time,
                            day_ru=day_ru,
                            form=form,
                            title='Забронировать преподавателя'
                            )
 
 
-@app.route('/booking_done/',  methods=['POST', 'GET'])
+@app.route('/booking_done/', methods=['POST', 'GET'])
 def show_booking_done():
     if request.method == 'POST':
         form = BookingForm()
-        print(form.client_phone)
-        if form.validate_on_submit():
+        day_ru = days_name[form.client_weekday.data]
+        if form.validate():
+            book = Booking()
+            form.populate_obj(book)
+            db.session.add(book)
+            db.session.commit()
             return render_template('booking_done.html',
-                                   client_data=form,
-                                   title='Преподаватель забронирован, {}'.format(form.client_name)
+                                   info=form,
+                                   day_ru=day_ru,
+                                   title='Преподаватель забронирован'
                                    )
         else:
             return "Форма получена, но есть ошибки!"
     else:
         return "Кажется, форма не отправлена!"
 
-db.create_all()
+
 if __name__ == '__main__':
     app.run(port=4999, debug=True)
