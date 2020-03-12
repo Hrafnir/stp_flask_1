@@ -42,6 +42,7 @@ class Goal(db.Model):
     __tablename__ = 'goals'
     g_id = db.Column(db.Integer, primary_key=True)
     goal_name = db.Column(db.String, nullable=False)
+    goal_url = db.Column(db.String, nullable=False)
     teacher = db.relationship("Teacher", back_populates="goals")
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
 
@@ -95,13 +96,12 @@ class Request(db.Model):
 #need to add goal url in Goal model
 @app.route('/goals/<goal>/')
 def get_goal(goal):
-    teachers_for_goal = db.session.query(Goal).filter(Goal.goal_name == goal).all()
+    teachers_for_goal = db.session.query(Goal).filter(Goal.goal_url == goal).all()
+    teachers = []
     for teacher in teachers_for_goal:
-        print(teacher.teacher_id)
-    return render_template('goal.html', teachers=teachers_for_goal, goal=data.goals[goal])
-
-
-
+        teachers.append(db.session.query(Teacher).get(teacher.teacher_id))
+    goal_name = db.session.query(Goal).filter(Goal.goal_url == goal).first().goal_name
+    return render_template('goal.html', teachers=teachers, goal=goal_name)
 
 
 @app.route('/profiles/<int:id_teacher>/')

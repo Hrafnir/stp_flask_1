@@ -17,6 +17,8 @@ for teach in data.teachers:
     db.session.add(teacher)
     for i in teach['goals']:
         goal = Goal(goal_name=goals[i],
-                    teacher=teacher)
+                    teacher=teacher,
+                    goal_url=i
+                    )
         db.session.add(goal)
 db.session.commit()
