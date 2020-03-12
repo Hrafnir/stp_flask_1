@@ -19,11 +19,6 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
              "sat": "Суббота", "sun": "Воскресенье"}
 
 
-# # my first code reuse function object ^_^
-# def select_teacher(id_teacher):
-#     for teach in data.teachers:
-#         if teach['id'] == id_teacher:
-#             return teach
 def get_goals():
     goals = dict()
     for goal in db.session.query(Goal).all():
