@@ -17,16 +17,14 @@
                     <div class="row">
                         <input class="form-control" type="hidden" name="clientWeekday" value="{{ day }}">
                         <input class="form-control" type="hidden" name="clientTime" value="{{ time }}">
-                        <input class="form-control" type="hidden" name="clientTeacher" value="{{ id_teacher }}">
+                        <input class="form-control" type="hidden" name="clientTeacher" value="{{ teach_dict.t_id }}">
                     </div>
+                      {{ form.client_name.label(class="mb-1 mt-2") }}
+                      {{ form.client_name(class="form-control") }}
 
-                  <label class="mb-1 mt-2" for="clientName">Вас зовут</label>
-                  <input class="form-control" type="text" name="clientName" id="clientName">
-
-                  <label class="mb-1 mt-2" for="clientPhone">Ваш телефон</label>
-                  <input class="form-control" type="tel"  name="clientPhone" id="clientPhone">
-
-                  <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
+                      {{ form.client_phone.label(class="mb-1 mt-2") }}
+                      {{ form.client_phone(class="form-control") }}
+                     <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
               </form>
           </div>
         </form>

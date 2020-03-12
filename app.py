@@ -5,7 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
 from wtforms import StringField
-import data  # sample date from file
+from wtforms.validators import InputRequired, Length
+from forms import BookingForm
 
 app = Flask(__name__)  # объявим экземпляр фласка
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
@@ -47,18 +48,6 @@ class Goal(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey("teachers.t_id"))
 
 
-# teacher = Teacher(t_id=1231213323434,
-#                   name="asdf",
-#                   about='asdfasdf',
-#                   rating=4.5,
-#                   picture='sadf',
-#                   price=234,
-#                   goals='[asdf,asdf]',
-#                   free="{asdf:asdfasdf}"
-#                   )
-# db.session.add(teacher)
-# db.session.commit()
-
 
 class Booking(db.Model):
     __tablename__ = 'bookings'
@@ -80,12 +69,18 @@ class Request(db.Model):
     time = db.Column(db.String, nullable=False)
 
 
-# @app.route('/')
-# def show_main_page():
-#     teachers = data.teachers
-#     random.sample(teachers, 6)
-#     return render_template('index.html', teachers=teachers)
-#
+@app.route('/')
+def show_main_page():
+    teachers = db.session.query(Teacher).all()
+    teach_s = random.sample(teachers, 6)
+    goals = dict()
+    for goal in db.session.query(Goal).all():
+        if len(goals) <= 4:  # 4 may be variable for main page's limit of goals
+            goals[goal.goal_url] = goal.goal_name
+        else:
+            break
+    return render_template('index.html', teachers=teach_s, goals=goals)
+
 #
 # @app.route('/tutors/')
 # def show_teachers():
@@ -93,7 +88,7 @@ class Request(db.Model):
 #     return render_template('index.html', teachers=teachers, title='Все репетиторы')
 #
 #
-#need to add goal url in Goal model
+
 @app.route('/goals/<goal>/')
 def get_goal(goal):
     teachers_for_goal = db.session.query(Goal).filter(Goal.goal_url == goal).all()
@@ -146,41 +141,37 @@ def page_not_found(e):
 #                            )
 #
 #
-# @app.route('/booking/<int:id_teacher>/<day>/<time>/')
-# def do_the_booking(id_teacher, day, time):
-#     # variable with value of day on russian from days dict
-#     day_ru = days_name[day]
-#     teach_dict = select_teacher(id_teacher)
-#     return render_template('booking.html',
-#                            teach_dict=teach_dict,
-#                            id_teacher=id_teacher,
-#                            day=day,
-#                            time=time,
-#                            day_ru=day_ru,
-#                            title='Забронировать преподавателя'
-#                            )
-#
-#
-# @app.route('/booking_done/', methods=['POST'])
-# def show_booking_done():
-#     client_weekday = request.form['clientWeekday']
-#     client_time = request.form['clientTime']
-#     client_name = request.form['clientName']
-#     client_phone = request.form['clientPhone']
-#     with open('book.json', 'w') as file:
-#         data_book = {'client_weekday': client_weekday,
-#                      'client_time': client_time,
-#                      'client_name': client_name,
-#                      'client_phone': client_phone
-#                      }
-#         json.dump(data_book, file)
-#     return render_template('booking_done.html',
-#                            client_name=client_name,
-#                            client_phone=client_phone,
-#                            client_time=client_time,
-#                            client_weekday=days_name[client_weekday],
-#                            title='Преподаватель забронирован, {}'.format(client_name)
-#                            )
+
+@app.route('/booking/<int:id_teacher>/<day>/<time>/')
+def do_the_booking(id_teacher, day, time):
+    # variable with value of day on russian from days dict
+    day_ru = days_name[day]
+    form = BookingForm()
+    teach_dict = db.session.query(Teacher).get(id_teacher)
+    return render_template('booking.html',
+                           teach_dict=teach_dict,
+                           day=day,
+                           time=time,
+                           day_ru=day_ru,
+                           form=form,
+                           title='Забронировать преподавателя'
+                           )
+
+
+@app.route('/booking_done/',  methods=['POST', 'GET'])
+def show_booking_done():
+    if request.method == 'POST':
+        form = BookingForm()
+        print(form.client_phone)
+        if form.validate_on_submit():
+            return render_template('booking_done.html',
+                                   client_data=form,
+                                   title='Преподаватель забронирован, {}'.format(form.client_name)
+                                   )
+        else:
+            return "Форма получена, но есть ошибки!"
+    else:
+        return "Кажется, форма не отправлена!"
 
 db.create_all()
 if __name__ == '__main__':
