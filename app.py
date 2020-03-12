@@ -24,7 +24,14 @@ days_name = {"mon": "Понедельник", "tue": "Вторник", "wed": "�
 #     for teach in data.teachers:
 #         if teach['id'] == id_teacher:
 #             return teach
-
+def get_goals():
+    goals = dict()
+    for goal in db.session.query(Goal).all():
+        if len(goals) <= 4:  # 4 may be variable for main page's limit of goals
+            goals[goal.goal_url] = goal.goal_name
+        else:
+            break
+    return goals
 
 class Teacher(db.Model):
     __tablename__ = 'teachers'
@@ -72,22 +79,23 @@ class Request(db.Model):
 def show_main_page():
     teachers = db.session.query(Teacher).all()
     teach_s = random.sample(teachers, 6)
-    goals = dict()
-    for goal in db.session.query(Goal).all():
-        if len(goals) <= 4:  # 4 may be variable for main page's limit of goals
-            goals[goal.goal_url] = goal.goal_name
-        else:
-            break
-    return render_template('index.html', teachers=teach_s, goals=goals)
+    goals = get_goals()
+    return render_template('index.html',
+                           teachers=teach_s,
+                           goals=goals
+                           )
 
 
-#
-# @app.route('/tutors/')
-# def show_teachers():
-#     teachers = data.teachers
-#     return render_template('index.html', teachers=teachers, title='Все репетиторы')
-#
-#
+@app.route('/tutors/')
+def show_teachers():
+    teachers = db.session.query(Teacher).all()
+    goals = get_goals()
+    return render_template('index.html',
+                           teachers=teachers,
+                           title='Все репетиторы',
+                           goals=goals
+                           )
+
 
 @app.route('/goals/<goal>/')
 def get_goal(goal):
