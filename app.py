@@ -27,6 +27,7 @@ def get_goals():
             break
     return goals
 
+
 # db models
 
 
@@ -93,7 +94,7 @@ class RequestForm(FlaskForm):
     goals = []
     for key, value in get_goals().items():
         goals.append((key, value))
-    client_goal = RadioField('Какая цель занятий?', choices=goals)
+    client_goal = RadioField('Какая цель ваших занятий?', choices=goals)
     free_time = RadioField('Сколько свободного времени у вас есть?',
                            choices=[("1-2", "1-2 часа в неделю"), ("3-5", "3-5 часов в неделю"),
                                     ("5-7", "5-7 часов в неделю"), ("7-10", "7-10 часов в неделю")])
@@ -159,22 +160,24 @@ def do_request():
     form = RequestForm()
     return render_template('request.html', title='Заявка на подбор', form=form)
 
-#
-# @app.route('/request_done/', methods=['POST'])
-# def req_done():
-#     # catch all data from form
-#     request_dict = request.form
-#     with open('request.json', 'w') as req:
-#         json.dump(request_dict, req)
-#     # variable with value of goal from goals dict
-#     goal = data.goals[request_dict['goal']]
-#     return render_template('request_done.html',
-#                            request_dict=request_dict,
-#                            goal=goal,
-#                            title='Заявка создана, {}'.format(request_dict['name'])
-#                            )
-#
-#
+
+@app.route('/request_done/', methods=['POST', 'GET'])
+def req_done():
+    if request.method == 'POST':
+        form = RequestForm()
+        goal = get_goals()[form.client_goal.data]
+        if form.validate():
+            write_req = Request()
+            form.populate_obj(write_req)
+            db.session.add(write_req)
+            db.session.commit()
+            return render_template('request_done.html',
+                                   form=form,
+                                   goal=goal,
+                                   title='Заявка создана, {}'.format(form.client_name)
+                                   )
+    else:
+        return "Кажется, форма не отправлена!"
 
 
 @app.route('/booking/<int:id_teacher>/<day>/<b_time>/')
@@ -213,6 +216,7 @@ def show_booking_done():
             return "Форма получена, но есть ошибки!"
     else:
         return "Кажется, форма не отправлена!"
+
 
 db.create_all()
 if __name__ == '__main__':

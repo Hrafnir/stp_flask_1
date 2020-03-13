@@ -13,9 +13,9 @@
           <hr />
           <div class="card-body mx-5">
             <p><b>Цель занятий:</b> {{ goal }}</p>
-            <p><b>Времени есть:</b> {{ request_dict.time }} часа в неделю</p>
-            <p><b>Имя:</b> {{ request_dict.name }}</p>
-            <p><b>Телефон:</b> {{ request_dict.telephone }}</p>
+            <p><b>Времени есть:</b> {{ form.free_time.data }} часа в неделю</p>
+            <p><b>Имя:</b> {{ form.client_name.data }}</p>
+            <p><b>Телефон:</b> {{ form.client_phone.data }}</p>
           </div>
         </div>
       </div>
