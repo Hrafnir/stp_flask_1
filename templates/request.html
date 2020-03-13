@@ -9,61 +9,29 @@
           <p class="px-5">Напишите, чего вам нужно и&nbsp;мы&nbsp;подберем отличных&nbsp;ребят</p>
         </div>
         <hr>
+        {{ form.csrf_token }}
+                    {% for err in form.errors %}
+                        <p>{{ err }}</p>
+                    {% endfor %}
         <div class="card-body mx-3">
           <div class="row">
             <div class="col">
               <p>Какая цель занятий?</p>
+              {% for subfield in form.client_goal %}
               <div class="form-check ">
-                <input type="radio" class="form-check-input" name="goal" value="travel" id="goal1" checked>
-                <label class="form-check-label" for="goal1">
-                  Для путешествий
-                </label> 
+                        {{ subfield(class="form-check-input") }}
+                        {{ subfield.label(class="form-check-label") }}
               </div>
-              <div class="form-check ">
-                <input type="radio" class="form-check-input" name="goal" value="study" id="goal2">
-                <label class="form-check-label" for="goal2">
-                  Для учебы
-                </label>
+              {% endfor %}
               </div>
-              <div class="form-check ">
-                <input type="radio" class="form-check-input" name="goal" value="work" id="goal3">
-                <label class="form-check-label" for="goal2">
-                  Для работы
-                </label>
-              </div>
-              <div class="form-check ">
-                <input type="radio" class="form-check-input" name="goal" value="relocate" id="goal4">
-                <label class="form-check-label" for="goal2">
-                  Для переезда
-                </label>
-              </div>
-            </div>
             <div class="col">
               <p>Сколько времени есть?</p>
-              <div class="form-check">
-                <input type="radio" class="form-check-input" name="time" value="1-2" id="time1">
-                <label class="form-check-label" for="time1">
-                  1-2 часа в&nbsp;неделю
-                </label> 
-              </div>
-              <div class="form-check">
-                <input type="radio" class="form-check-input" name="time" value="3-5" id="time2">
-                <label class="form-check-label" for="time2">
-                  3-5 часов в&nbsp;неделю
-                </label>
-              </div>
-              <div class="form-check">
-                <input type="radio" class="form-check-input" name="time" value="5-7" id="time3" checked>
-                <label class="form-check-label" for="time3">
-                  5-7 часов в&nbsp;неделю
-                </label> 
-              </div>
-              <div class="form-check">
-                <input type="radio" class="form-check-input" name="time" value="7-10" id="time4">
-                <label class="form-check-label" for="time4">
-                  7-10 часов в&nbsp;неделю
-                </label>
-              </div>
+              {% for subfield in form.free_time %}
+                  <div class="form-check">
+                        {{ subfield(class="form-check-input") }}
+                        {{ subfield.label(class="form-check-label") }}
+                  </div>
+              {% endfor %}
             </div>
           </div>
         </div>

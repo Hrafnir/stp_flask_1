@@ -4,9 +4,8 @@ from flask import Flask, render_template, request  # сперва подключ
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, HiddenField, RadioField
 from wtforms.validators import InputRequired, Length
-from forms import BookingForm
 
 app = Flask(__name__)  # объявим экземпляр фласка
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
@@ -27,6 +26,9 @@ def get_goals():
         else:
             break
     return goals
+
+# db models
+
 
 class Teacher(db.Model):
     __tablename__ = 'teachers'
@@ -64,10 +66,37 @@ class Booking(db.Model):
 class Request(db.Model):
     __tablename__ = 'requests'
     r_id = db.Column(db.Integer, primary_key=True)
-    goal = db.Column(db.String, nullable=False)
+    client_goal = db.Column(db.String, nullable=False)
     client_name = db.Column(db.String, nullable=False)
     client_phone = db.Column(db.String, nullable=False)
-    time = db.Column(db.String, nullable=False)
+    free_time = db.Column(db.String, nullable=False)
+
+
+# forms objects
+
+
+class BookingForm(FlaskForm):
+    client_name = StringField('Вас зовут', [InputRequired(message="Введите имя!"),
+                                            Length(min=1, message="Слишком короткая строка")])
+    client_phone = StringField('Ваш телефон', [InputRequired(message="Введите телефон!"),
+                                               Length(min=1, message="Слишком короткая строка")])
+    client_weekday = HiddenField("day")
+    client_time = HiddenField("time")
+    teacher_id = HiddenField("teacher_id")
+
+
+class RequestForm(FlaskForm):
+    client_name = StringField('Вас зовут', [InputRequired(message="Введите имя!"),
+                                            Length(min=1, message="Слишком короткая строка")])
+    client_phone = StringField('Ваш телефон', [InputRequired(message="Введите телефон!"),
+                                               Length(min=1, message="Слишком короткая строка")])
+    goals = []
+    for key, value in get_goals().items():
+        goals.append((key, value))
+    client_goal = RadioField('Какая цель занятий?', choices=goals)
+    free_time = RadioField('Сколько свободного времени у вас есть?',
+                           choices=[("1-2", "1-2 часа в неделю"), ("3-5", "3-5 часов в неделю"),
+                                    ("5-7", "5-7 часов в неделю"), ("7-10", "7-10 часов в неделю")])
 
 
 @app.route('/')
@@ -125,12 +154,11 @@ def page_not_found(e):
     return render_template('404.html', title='Страница не найдена'), 404
 
 
-#
-#
-# @app.route('/request/')
-# def do_request():
-#     return render_template('request.html', title='Заявка на подбор')
-#
+@app.route('/request/')
+def do_request():
+    form = RequestForm()
+    return render_template('request.html', title='Заявка на подбор', form=form)
+
 #
 # @app.route('/request_done/', methods=['POST'])
 # def req_done():
@@ -147,6 +175,7 @@ def page_not_found(e):
 #                            )
 #
 #
+
 
 @app.route('/booking/<int:id_teacher>/<day>/<b_time>/')
 def do_the_booking(id_teacher, day, b_time):
@@ -185,6 +214,6 @@ def show_booking_done():
     else:
         return "Кажется, форма не отправлена!"
 
-
+db.create_all()
 if __name__ == '__main__':
     app.run(port=4999, debug=True)
